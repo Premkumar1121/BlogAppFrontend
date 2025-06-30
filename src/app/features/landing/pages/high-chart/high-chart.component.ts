@@ -54,28 +54,60 @@ export class HighChartComponent implements OnInit {
     HighchartsStock.stockChart(chartId, {
       title: { text: title },
       rangeSelector: { selected: 1 },
-      xAxis: { type: 'datetime' },
-      series: [{ name: 'Posts', type: 'area', data: seriesData,color:'#FFCC17' }],
-      credits: {
-        enabled: false
-      }
+      navigator: { enabled: true },
+      scrollbar: { enabled: true },
+      xAxis: { type: 'datetime', zoomEnabled: true },
+      series: [{
+        name: 'Posts',
+        type: 'area',
+        data: seriesData,
+        color: '#FFCC17'
+      }],
+      credits: { enabled: false }
     });
   }
+
 
   // ✅ Users over time chart
   renderUserChart(chartId: string, data: usersOverTime, title: string): void {
     const seriesData = data.labels.map((label, i) => [new Date(label).getTime(), data.counts[i]]);
+
     Highcharts.chart(chartId, {
-      chart: { type: 'spline' },
+      chart: {
+        type: 'spline',
+        zoomType: 'x',
+        panning: { enabled: true },
+        panKey: 'shift'
+      },
+      rangeSelector: {
+        selected: 1
+      },
+      navigator: {
+        enabled: true
+      },
       title: { text: title },
-      xAxis: { type: 'datetime' },
-      yAxis: { title: { text: 'Users' } },
-      series: [{ name: 'Users', type: 'spline', data: seriesData }],
-      credits: {
-        enabled: false
-      }
-    });
+      xAxis: {
+        type: 'datetime',
+        title: { text: 'Date' }
+      },
+      yAxis: {
+        title: { text: 'Users' }
+      },
+      tooltip: {
+        shared: true,
+        crosshairs: true,
+        xDateFormat: '%Y-%m-%d'
+      },
+      series: [{
+        name: 'Users',
+        data: seriesData,
+        type: 'spline',
+        color: '#36A2EB'
+      }],
+      credits: { enabled: false }
+    } as Highcharts.Options);
   }
+
 
   // ✅ Posts by category
   renderPostsByCategory(chartId: string, data: postsByCategory[], title: string): void {
@@ -84,7 +116,9 @@ export class HighChartComponent implements OnInit {
       return acc;
     }, {} as Record<string, number>);
     Highcharts.chart(chartId, {
-      chart: { type: 'pie' },
+      chart: {
+        type: 'pie'
+      },
       title: { text: title },
       series: [{
         name: 'Posts',
@@ -100,21 +134,28 @@ export class HighChartComponent implements OnInit {
   // ✅ Top tags
   renderTopTagsPieChart(chartId: string, data: topTags[], title: string): void {
     Highcharts.chart(chartId, {
-      chart: { type: 'areaspline' },
+      chart: {
+        type: 'areaspline',
+        zoomType: 'xy'
+
+      },
       title: { text: title },
       xAxis: { categories: data.map((t) => t.name) },
       yAxis: { title: { text: 'Tags' } },
-      series: [{ name: 'Tag Usage', type: 'areaspline', data: data.map((t) => t.value), color:'#F5921B'}],
+      series: [{ name: 'Tag Usage', type: 'areaspline', data: data.map((t) => t.value), color: '#F5921B' }],
       credits: {
         enabled: false
       }
-    });
+    } as Highcharts.Options);
   }
 
   // ✅ Most liked posts
   renderMostLikedPosts(chartId: string, data: mostLiked[], title: string): void {
     Highcharts.chart(chartId, {
-      chart: { type: 'column' },
+      chart: {
+        type: 'column',
+        zoomType: 'xy'
+      },
       title: { text: title },
       xAxis: { categories: data.map((p) => p.title) },
       yAxis: { title: { text: 'Likes' } },
@@ -122,6 +163,6 @@ export class HighChartComponent implements OnInit {
       credits: {
         enabled: false
       }
-    });
+    } as Highcharts.Options);
   }
 }
